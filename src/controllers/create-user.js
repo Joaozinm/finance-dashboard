@@ -23,6 +23,16 @@ export class CreateUserController {
                 }
             }
 
+            if (params.password.length < 6) {
+                return {
+                    statusCode: 400,
+                    body: {
+                        errorMessage:
+                            'Password must have at least 6 characters',
+                    },
+                }
+            }
+
             // call useCase
             const createUserUseCase = new CreateUserUseCase()
 
