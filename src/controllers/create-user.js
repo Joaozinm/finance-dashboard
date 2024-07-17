@@ -1,4 +1,11 @@
 import { CreateUserUseCase } from '../use-cases/create-user.js'
+import validator from 'validator'
+import {
+    badRequest,
+    created,
+    PostgresEmailCheck,
+    serverError,
+} from './helpers.js'
 
 export class CreateUserController {
     async execute(httpRequest) {
@@ -14,23 +21,36 @@ export class CreateUserController {
 
             for (const field of requiredFields) {
                 if (!params[field] || params[field].trim().length === 0) {
-                    return {
-                        statusCode: 400,
-                        body: {
-                            errorMessage: `Missing param: ${field}`,
-                        },
-                    }
+                    return badRequest({ message: `Missing param: ${field}` })
                 }
             }
 
-            if (params.password.length < 6) {
-                return {
-                    statusCode: 400,
-                    body: {
-                        errorMessage:
-                            'Password must have at least 6 characters',
-                    },
-                }
+            const passwordIsValid = params.password.length < 6
+            if (passwordIsValid) {
+                return badRequest({
+                    message: 'Password must have at least 6 characters',
+                })
+            }
+
+            const emailIsValid = validator.isEmail(params.email)
+
+            if (!emailIsValid) {
+                return badRequest({
+                    message: 'Invalid email. Please provide a valid one.',
+                })
+            }
+
+            //Verifying if the email already exist
+            const postgreEmailCheck = new PostgresEmailCheck()
+
+            const emailChecking = await postgreEmailCheck.execute(params.email)
+
+            const emailChecked = emailChecking[0].exists
+
+            if (emailChecked) {
+                return badRequest({
+                    message: 'This email was already taken. Try another one.',
+                })
             }
 
             // call useCase
@@ -39,18 +59,10 @@ export class CreateUserController {
             const createdUser = await createUserUseCase.execute(params)
 
             // return the answer to the user (status code)
-            return {
-                statusCode: 201,
-                body: createdUser,
-            }
+            return created(createdUser)
         } catch (error) {
             console.log(error)
-            return {
-                statusCode: 500,
-                body: {
-                    errorMessage: 'Internal server error',
-                },
-            }
+            return serverError()
         }
     }
 }
