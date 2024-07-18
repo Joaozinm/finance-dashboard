@@ -1,5 +1,3 @@
-import { PostgresHelper } from '../db/postgres/helper.js'
-
 export const badRequest = (body) => ({
     statusCode: 400,
     body,
@@ -16,16 +14,6 @@ export const serverError = () => ({
         message: 'Internal server error',
     },
 })
-
-export class PostgresEmailCheck {
-    async execute(param) {
-        const passedEmail = await PostgresHelper.query(
-            'SELECT EXISTS (SELECT 1 FROM users WHERE email = $1) AS "exists"',
-            [param],
-        )
-        return passedEmail
-    }
-}
 
 export const ok = (body) => ({
     statusCode: 200,

@@ -1,11 +1,6 @@
 import { CreateUserUseCase } from '../use-cases/create-user.js'
 import validator from 'validator'
-import {
-    badRequest,
-    created,
-    PostgresEmailCheck,
-    serverError,
-} from './helpers.js'
+import { badRequest, created, serverError } from './helpers.js'
 
 export class CreateUserController {
     async execute(httpRequest) {
@@ -41,17 +36,6 @@ export class CreateUserController {
             }
 
             //Verifying if the email already exist
-            const postgreEmailCheck = new PostgresEmailCheck()
-
-            const emailChecking = await postgreEmailCheck.execute(params.email)
-
-            const emailChecked = emailChecking[0].exists
-
-            if (emailChecked) {
-                return badRequest({
-                    message: 'This email was already taken. Try another one.',
-                })
-            }
 
             // call useCase
             const createUserUseCase = new CreateUserUseCase()
