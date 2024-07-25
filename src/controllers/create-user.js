@@ -32,7 +32,7 @@ export class CreateUserController {
 
             if (!emailIsValid) {
                 return badRequest({
-                    message: 'Invalid email. Please provide a valid one.',
+                    message: 'Invalid email. Provide a valid one.',
                 })
             }
 
