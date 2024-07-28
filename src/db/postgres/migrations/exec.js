@@ -15,7 +15,7 @@ const execMigrations = async () => {
 
         await client.query(script)
 
-        console.log('Migrations executed successfully.')
+        console.log('Migrations executed successfully')
     } catch (error) {
         console.error(error)
     } finally {
