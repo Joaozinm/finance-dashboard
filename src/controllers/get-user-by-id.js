@@ -21,7 +21,7 @@ export class GetUserByIdController {
 
             if (!user) {
                 return notFound({
-                    message: 'User not found. Try another one',
+                    message: 'User not found, try another one.',
                 })
             }
             return ok(user)
