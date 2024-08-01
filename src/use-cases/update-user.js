@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt'
-import { PostgresGetUserByEmailRepository } from '../repositories/postgres/get-user-by-email'
+import { PostgresGetUserByEmailRepository } from '../repositories/postgres/get-user-by-email.js'
 import { EmailAlreadyInUseError } from '../errors/user.js'
 import { PostgresUpdateUserRepository } from '../repositories/postgres/update-user.js'
 
@@ -12,7 +12,7 @@ export class UpdateUserUseCase {
                 updateUserParams.email,
             )
 
-            if (emailChecking) {
+            if (emailChecking && emailChecking.id != userId) {
                 throw new EmailAlreadyInUseError(updateUserParams.email)
             }
         }
