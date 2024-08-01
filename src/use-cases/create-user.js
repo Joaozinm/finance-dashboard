@@ -7,7 +7,6 @@ import { EmailAlreadyInUseError } from '../errors/user.js'
 
 export class CreateUserUseCase {
     async execute(createUserParams) {
-        // TODO: verify if email already exist
         const postgreEmailCheck = new PostgresGetUserByEmailRepository()
 
         const emailChecking = await postgreEmailCheck.execute(
